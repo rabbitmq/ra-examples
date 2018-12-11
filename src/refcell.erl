@@ -91,7 +91,7 @@ state_enter(_, _) ->
 
 put(Server, Value) ->
     case ra:process_command(Server, {put, Value}) of
-        {ok, _, ok} -> ok;
+        {ok, _, _} -> ok;
         Err -> Err
     end.
 
@@ -104,7 +104,7 @@ get(Server) ->
 
 watch(Server) ->
     case ra:process_command(Server, {watch, self()}) of
-        {ok, ok, _} -> ok;
+        {ok, _, _} -> ok;
         Err -> Err
     end.
 
