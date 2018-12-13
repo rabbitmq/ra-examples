@@ -12,6 +12,8 @@
          watch/1,
 
          start/1,
+         start/2,
+         
          state_enter/2
          ]).
 
