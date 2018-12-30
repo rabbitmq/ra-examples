@@ -3,7 +3,7 @@
 
 -export([
          init/1,
-         apply/4,
+         apply/3,
 
          add/3,
          remove/2,
@@ -47,21 +47,21 @@ consensus_member(Id, RaServer) ->
 init(_) ->
     #?MODULE{value = #{}}.
 
-apply(_Metadata, {add, Id, Pid}, Effects, State = #?MODULE{value = M0}) ->
+apply(_Metadata, {add, Id, Pid}, State = #?MODULE{value = M0}) ->
     case maps:take(Id, M0) of
         error         ->
             M = maps:put(Id, Pid, M0),
-            {State#?MODULE{value = M}, Effects, ok};
+            {State#?MODULE{value = M}, ok, []};
         {Pid, _Rest} ->
-            {State, Effects, ok};
+            {State, ok, []};
         {Other, Rest} ->
             M1 = maps:put(Id, Pid, Rest),
             Effect = {send_msg, Other, {duplicate, Pid}},
-            {State#?MODULE{value = M1}, [Effect | Effects], ok}
+            {State#?MODULE{value = M1}, ok, [Effect]}
     end;
 
-apply(_Metadata, {remove, Id}, Effects, State = #?MODULE{value = M}) ->
-    {State#?MODULE{value = maps:remove(Id, M)}, Effects, ok};
+apply(_Metadata, {remove, Id}, State = #?MODULE{value = M}) ->
+    {State#?MODULE{value = maps:remove(Id, M)}, ok, []};
 
-apply(_Metadata, {get, Id}, Effects, State = #?MODULE{value = M}) ->
-    {State, Effects, maps:get(Id, M, undefined)}.
+apply(_Metadata, {get, Id}, State = #?MODULE{value = M}) ->
+    {State, maps:get(Id, M, undefined), []}.
