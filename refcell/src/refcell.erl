@@ -5,7 +5,7 @@
 
 -export([
          init/1,
-         apply/4,
+         apply/3,
 
          put/2,
          get/1,
@@ -32,52 +32,52 @@
 init(_) ->
     #?MODULE{}.
 
-apply(_Meta, {put, Value}, Effects,
+apply(_Meta, {put, Value},
       #?MODULE{value = Value} = State) ->
     %% no change
-    {State, Effects, ok};
-apply(#{index := Idx}, {put, Value}, Effects0,
+    {State, ok, []};
+apply(#{index := Idx}, {put, Value},
       #?MODULE{watchers = Watchers, value = OldValue} = State0) ->
     %% notify all watchers of the change of value
-    Effects1 = maps:fold(
+    Effects0 = maps:fold(
                 fun (P, _, Acc) ->
                         [{send_msg, P, {refcell_changed, OldValue, Value}}
                          | Acc]
-                end, Effects0, Watchers),
+                end, [], Watchers),
     State = State0#?MODULE{value = Value},
     %% emit a release cursor effect every 1000 commands or so
     %% (give or take the number of non state machine commands that ra
     %% processes
     Effects = case Idx rem 1000 of
-                  0 -> [{release_cursor, Idx, State} | Effects1];
-                  _ -> Effects1
+                  0 -> [{release_cursor, Idx, State} | Effects0];
+                  _ -> Effects0
               end,
-    {State, Effects, ok};
-apply(_Meta, get, Effects, State = #?MODULE{value = Value}) ->
-    {State, Effects, Value};
-apply(_Meta, {watch, Pid}, Effects, State = #?MODULE{watchers = Watchers}) ->
+    {State, ok, Effects};
+apply(_Meta, get, State = #?MODULE{value = Value}) ->
+    {State, Value, []};
+apply(_Meta, {watch, Pid}, State = #?MODULE{watchers = Watchers}) ->
     {State#?MODULE{watchers = Watchers#{Pid => ok}},
-     [{monitor, process, Pid} | Effects], ok};
-apply(_Meta, {down, Pid, noconnection}, Effects, State) ->
+     ok, [{monitor, process, Pid}]};
+apply(_Meta, {down, Pid, noconnection}, State) ->
     %% noconnection doesn't mean the watcher process is actually down
     %% to find out we monitor the node and re-issue monitors when the node
     %% comes back (see nodeup)
-    {State, [{monitor, node, node(Pid)} | Effects], ok};
-apply(_Meta, {down, Pid, _Reason}, Effects,
+    {State, ok, [{monitor, node, node(Pid)}]};
+apply(_Meta, {down, Pid, _Reason},
       #?MODULE{watchers = Watchers} = State) ->
     %% clean up watchers when monitor triggers
-    {State#?MODULE{watchers = maps:remove(Pid, Watchers)}, Effects, ok};
-apply(_Meta, {nodeup, Node}, Effects0,
+    {State#?MODULE{watchers = maps:remove(Pid, Watchers)}, ok, []};
+apply(_Meta, {nodeup, Node},
       #?MODULE{watchers = Watchers} = State) ->
     %% notify all watchers
     Effects = maps:fold(
                 fun (P, _, Acc) when node(P) =:= Node ->
                         [{monitor, proess, P} | Acc]
-                end, Effects0, Watchers),
-    {State, Effects, ok};
-apply(_Meta, {nodedown, _}, Effects, State) ->
+                end, [], Watchers),
+    {State, ok, Effects};
+apply(_Meta, {nodedown, _}, State) ->
     %% we need to handle the nodedown as well to avoid crashing
-    {State, Effects, ok}.
+    {State, ok, []}.
 
 
 %% when a server enters leader state we need to re-issue all monitors
