@@ -1,0 +1,5 @@
+%{
+  "aten": {:hex, :aten, "0.5.0", "e3d625d763b0b077a802d642c37cf8159ab771aa5acd915e1939195a223d96a7", [:rebar3], [], "hexpm"},
+  "gen_batch_server": {:hex, :gen_batch_server, "0.6.0", "2f7d3d4bf50a3aff9cff2c640593d02c07464452a744309a3ab2071ed335df01", [:rebar3], [], "hexpm"},
+  "ra": {:hex, :ra, "0.9.2", "cd9f39d9f13c8b359644e61bba91e24a86ac5f14fb1e1be0adaea1a016c1935a", [:rebar3], [{:aten, "0.5.0", [hex: :aten, repo: "hexpm", optional: false]}, {:gen_batch_server, "0.6.0", [hex: :gen_batch_server, repo: "hexpm", optional: false]}], "hexpm"},
+}
