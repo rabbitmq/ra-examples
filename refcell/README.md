@@ -22,12 +22,12 @@ rebar3 shell --sname node1
 
 - run the node2:
 ```
-rebar3 shell --sname node1
+rebar3 shell --sname node2
 
 ```
-- run the node2:
+- run the node3:
 ```
-rebar3 shell --sname node1
+rebar3 shell --sname node3
 
 ```
 
