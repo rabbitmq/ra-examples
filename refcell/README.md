@@ -55,10 +55,10 @@ Check the cluster members:
 
 ```erlang
 refcell:members().
-Cluster Members:
-Leader:{refcell,node1@GaS}
-Followers:[{refcell,node2@GaS},{refcell,node3@GaS}]
-Nodes:[{refcell,node1@GaS},{refcell,node2@GaS},{refcell,node3@GaS}]
+%% => Cluster Members:
+%% => Leader:{refcell,node1@GaS}
+%% => Followers:[{refcell,node2@GaS},{refcell,node3@GaS}]
+%% => Nodes:[{refcell,node1@GaS},{refcell,node2@GaS},{refcell,node3@GaS}]
 ```
 
 put a value:
