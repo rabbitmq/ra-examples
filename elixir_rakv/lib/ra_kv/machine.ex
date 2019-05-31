@@ -7,14 +7,14 @@ defmodule RaKv.Machine do
   end
   
   @impl :ra_machine
-  def apply(_meta, {:put, key, value}, effects, state) do
-    {Map.put(state, key, value), effects, :inserted}
+  def apply(_meta, {:put, key, value}, state) do
+    {Map.put(state, key, value), :inserted}
   end
 
   @impl :ra_machine
-  def apply(_meta, {:get, key}, effects, state) do
+  def apply(_meta, {:get, key}, state) do
     reply = Map.get(state, key, nil)
-    {state, effects, reply}
+    {state, reply}
   end
 
 end
