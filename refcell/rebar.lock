@@ -3,7 +3,7 @@
  {<<"gen_batch_server">>,{pkg,<<"gen_batch_server">>,<<"0.7.0">>},1},
  {<<"ra">>,
   {git,"https://github.com/rabbitmq/ra.git",
-       {ref,"687d273eba2c46704b09ae76925138fd8c0c5d24"}},
+       {ref,"294a03ef5ff91645104d7e68fc49c754cf3e40ea"}},
   0}]}.
 [
 {pkg_hash,[
