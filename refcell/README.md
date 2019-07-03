@@ -31,7 +31,7 @@ rebar3 shell --sname node3
 
 ```
 
-Init the nodes with `refcell:init()`:
+Init each node with `refcell:init()`:
 
 ```erlang
 (node1@GaS)1> refcell:init().
